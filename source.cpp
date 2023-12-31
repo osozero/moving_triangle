@@ -4,22 +4,15 @@
 #include <glad/gl.h>
 
 #define GLFW_INCLUDE_GLCOREARB
-
 #define GL_SILENCE_DEPRECATION // disable for os x
 
-
 #include <GLFW/glfw3.h>
-
 #include <glm/vec3.hpp> // glm::vec3
-
-
 
 
 void error_callback(int error, const char* message) {
     fprintf(stderr, "Error: %s\n", message);
-    printf("HATAAAAAAAAAAAAA\n");
 }
-
 
 int main(void)
 {
@@ -184,7 +177,6 @@ int main(void)
         glfwGetFramebufferSize(window, &width, &height);
         glViewport(0, 0, width, height);
         
-        // render here
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader_program);
@@ -205,7 +197,6 @@ int main(void)
 
         glfwPollEvents();
     }
-
 
     glfwTerminate();
     
