@@ -141,7 +141,6 @@ int main(void)
     glfwSwapInterval(1);
 
     int width, height;
-    double xpos, ypos;
 
     // loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
