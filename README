@@ -1,0 +1,19 @@
+Simple, movable  and scalable triangle by using vertex shader and translation operations.
+
+The biggest challenge was setting up os x environment to work with modernopengl framework.
+
+I use:
+ - glfw
+ - glad
+ - opengl
+
+There is some os x specific settings in the code which I believe could help anyone wants to implement opengl with os x.
+
+NOTE: Build script uses hardcoded path which you need to chage it.
+
+For more information, visit
+
+GLFW: https://www.glfw.org/docs/latest/build_guide.html
+GLAD: https://github.com/Dav1dde/glad
+
+https://www.lurklurk.org/linkers/linkers.html <= THIS IS INSANE!!!
