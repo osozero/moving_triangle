@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <math.h>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
@@ -10,22 +11,46 @@
 
 #include <GLFW/glfw3.h>
 
-#include <glm/vec3.hpp> // glm::vec3
-
-
+//#include <glm/vec3.hpp> // glm::vec3
+//#include <glm/mat4x4.hpp>
+//#include <glm/gtc/type_ptr.hpp>
 
 
 void error_callback(int error, const char* message) {
     fprintf(stderr, "Error: %s\n", message);
-    printf("HATAAAAAAAAAAAAA\n");
-}
+  }
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} vec3;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+    float w;
+}vec4;
+
+typedef struct {
+    float m[4][4];
+
+}mat4;
 
 
 int main(void)
 {
-    glm::vec3 translation(0.0f, 0.0f, 0.0f);
-    glm::vec3 scale(1.0f, 1.0f, 1.0f);
+    vec3 translation = {0.0f, 0.0f, 0.0f};
+    vec3 scale = {1.0f, 1.0f, 1.0f};
 
+    mat4 z_rotation_matrix = { .m = {
+        {1.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 1.0f}
+    }};
+    
     glfwSetErrorCallback(error_callback);
     
     GLFWwindow *window;
@@ -43,7 +68,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);    
 
     // create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(640, 480, "Hello Window", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "Sonic Loop :)", NULL, NULL);
 
     if (!window) {
         printf("no window...\n");
@@ -136,34 +161,54 @@ int main(void)
     GLint translation_loc = glGetUniformLocation(shader_program, "translation");
     GLint scale_loc = glGetUniformLocation(shader_program, "scale");
 
+    GLint rotation_matrix_loc = glGetUniformLocation(shader_program, "z_rotation_matrix");
+
 /******************************************************************/
 
     glfwSwapInterval(1);
 
     int width, height;
-
+    float  theta = 0.0f;
     // loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
+        // rotation on Z axis
+        theta += 0.01;
 
+        float cos_theta = cos(theta);
+        float sin_theta = sin(theta);
+
+        z_rotation_matrix.m[0][0] = cos_theta;
+        z_rotation_matrix.m[0][1]= -1 * (sin_theta);
+        z_rotation_matrix.m[1][0]= sin_theta;
+        z_rotation_matrix.m[1][1] = cos_theta;
+                    
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, 1);
             continue;
         }
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            translation.y += 0.005f;
+            if (translation.y < 1.0f) {
+                translation.y += 0.005f;
+            }
         }
 
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            translation.y -= 0.005f;
+            if (translation.y > -1.0f) {
+                translation.y -= 0.005f;
+            }
         }
 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            translation.x -= 0.005f;
+            if (translation.x > -1.0f) {
+                translation.x -= 0.005f;
+            }
         }
 
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            translation.x += 0.005f;
+            if (translation.x < 1.0f) {
+                translation.x += 0.005f;
+            }
         }
 
         // scale keys
@@ -189,10 +234,11 @@ int main(void)
         glUseProgram(shader_program);
 
         glUniform3f(translation_loc, translation.x, translation.y, translation.z);
-
         glUniform3f(scale_loc, scale.x, scale.y, scale.z);
 
-        
+        //glUniformMatrix4fv(rotation_matrix_loc, 1, GL_FALSE, glm::value_ptr(z_rotation_matrix));
+        glUniformMatrix4fv(rotation_matrix_loc, 1, GL_FALSE, (GLfloat*)&(z_rotation_matrix.m));
+                
         glBindVertexArray(vao);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);

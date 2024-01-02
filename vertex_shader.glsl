@@ -5,7 +5,10 @@ uniform vec3 translation; //translates the triangle
 
 uniform vec3 scale; //scales it
 
+uniform mat4 z_rotation_matrix;
+
 void main() {
-    vec3 scaled_pos = aPos * scale;
-    gl_Position = vec4(scaled_pos + translation, 1.0);
+    vec4 rotated = z_rotation_matrix * vec4(aPos, 1.0f);
+    vec4 scaled = rotated * vec4(scale, 1.0f);
+    gl_Position = scaled + vec4(translation, 0.0f);
 }
